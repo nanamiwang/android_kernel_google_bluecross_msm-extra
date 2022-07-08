@@ -3077,9 +3077,9 @@ static int msm_snd_enable_codec_ext_clk(struct snd_soc_codec *codec,
 {
 	int ret = 0;
 
-	if (!strcmp(dev_name(codec->dev), "tavil_codec")) {
+/*	if (!strcmp(dev_name(codec->dev), "tavil_codec")) {
 		ret = tavil_cdc_mclk_enable(codec, enable);
-	} else {
+	} else */{
 		dev_err(codec->dev, "%s: unknown codec to enable ext clk\n",
 			__func__);
 		ret = -EINVAL;
@@ -3092,9 +3092,9 @@ static int msm_snd_enable_codec_ext_tx_clk(struct snd_soc_codec *codec,
 {
 	int ret = 0;
 
-	if (!strcmp(dev_name(codec->dev), "tavil_codec")) {
+/*	if (!strcmp(dev_name(codec->dev), "tavil_codec")) {
 		ret = tavil_cdc_mclk_tx_enable(codec, enable);
-	} else {
+	} else */{
 		dev_err(codec->dev, "%s: unknown codec to enable TX ext clk\n",
 			__func__);
 		ret = -EINVAL;
@@ -3909,6 +3909,53 @@ static struct notifier_block service_nb = {
 	.priority = -INT_MAX,
 };
 
+static struct afe_param_cdc_reg_cfg audio_reg_cfg[] = {};
+
+static struct afe_param_cdc_reg_cfg_data tavil_audio_reg_cfg = {
+        .num_registers = ARRAY_SIZE(audio_reg_cfg),
+        .reg_data = audio_reg_cfg,
+};
+
+static struct afe_param_id_cdc_aanc_version tavil_cdc_aanc_version = {
+        .cdc_aanc_minor_version = AFE_API_VERSION_CDC_AANC_VERSION,
+        .aanc_hw_version        = AANC_HW_BLOCK_VERSION_2,
+};
+
+static struct afe_param_cdc_reg_page_cfg tavil_cdc_reg_page_cfg = {
+        .minor_version = AFE_API_VERSION_CDC_REG_PAGE_CFG,
+        .enable = 1,
+        .proc_id = AFE_CDC_REG_PAGE_ASSIGN_PROC_ID_1,
+};
+
+/**
+ * tavil_get_afe_config - returns specific codec configuration to afe to write
+ *
+ * @codec: codec instance
+ * @config_type: Indicates type of configuration to write.
+ */
+void *tavil_get_afe_config(struct snd_soc_codec *codec,
+                           enum afe_config_type config_type)
+{
+        //struct tavil_priv *priv = snd_soc_codec_get_drvdata(codec);
+
+        switch (config_type) {
+        //case AFE_SLIMBUS_SLAVE_CONFIG:
+        //      return &priv->slimbus_slave_cfg;
+        case AFE_CDC_REGISTERS_CONFIG:
+                return &tavil_audio_reg_cfg;
+        //case AFE_SLIMBUS_SLAVE_PORT_CONFIG:
+        //      return &tavil_slimbus_slave_port_cfg;
+        case AFE_AANC_VERSION:
+                return &tavil_cdc_aanc_version;
+        case AFE_CDC_REGISTER_PAGE_CONFIG:
+                return &tavil_cdc_reg_page_cfg;
+        default:
+                dev_info(codec->dev, "%s: Unknown config_type 0x%x\n",
+                        __func__, config_type);
+                return NULL;
+        }
+}
+
 static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 {
 	int ret = 0;
@@ -4035,7 +4082,7 @@ static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 		goto done;
 	}
 	pdata->codec_root = entry;
-	tavil_codec_info_create_codec_entry(pdata->codec_root, codec);
+	//tavil_codec_info_create_codec_entry(pdata->codec_root, codec);
 
 done:
 	codec_reg_done = true;
@@ -5521,6 +5568,7 @@ static struct snd_soc_dai_link msm_common_dai_links[] = {
 };
 
 static struct snd_soc_dai_link msm_tavil_fe_dai_links[] = {
+#if 0
 	{
 		.name = LPASS_BE_SLIMBUS_4_TX,
 		.stream_name = "Slimbus4 Capture",
@@ -5559,6 +5607,7 @@ static struct snd_soc_dai_link msm_tavil_fe_dai_links[] = {
 		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
 		.ops = &msm_slimbus_2_be_ops,
 	},
+#endif
 };
 
 #if defined(CONFIG_SND_SOC_CS35L36)
