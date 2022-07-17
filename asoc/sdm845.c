@@ -514,7 +514,9 @@ static struct snd_soc_codec_conf *msm_codec_conf;
 
 static struct msm_asoc_wcd93xx_codec msm_codec_fn;
 
+#if 0
 static void *def_tavil_mbhc_cal(void);
+#endif
 static int msm_snd_enable_codec_ext_clk(struct snd_soc_codec *codec,
 					int enable, bool dapm);
 
@@ -547,7 +549,7 @@ static struct wcd_mbhc_config wcd_mbhc_cfg = {
 	.anc_micbias = MIC_BIAS_2,
 	.enable_anc_mic_detect = false,
 };
-
+#if 0
 static struct snd_soc_dapm_route wcd_audio_paths[] = {
 	{"MIC BIAS1", NULL, "MCLK TX"},
 	{"MIC BIAS2", NULL, "MCLK TX"},
@@ -555,7 +557,7 @@ static struct snd_soc_dapm_route wcd_audio_paths[] = {
 	{"MIC BIAS4", NULL, "MCLK TX"},
 	{"AMIC1", NULL, "MCLK TX"},
 };
-
+#endif
 static struct afe_clk_set mi2s_clk[MI2S_MAX] = {
 	{
 		AFE_API_VERSION_I2S_CONFIG,
@@ -3955,7 +3957,7 @@ void *tavil_get_afe_config(struct snd_soc_codec *codec,
                 return NULL;
         }
 }
-
+#if 0
 static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 {
 	int ret = 0;
@@ -4101,7 +4103,9 @@ static int msm_wcn_init(struct snd_soc_pcm_runtime *rtd)
 	return snd_soc_dai_set_channel_map(codec_dai, ARRAY_SIZE(tx_ch),
 					   tx_ch, ARRAY_SIZE(rx_ch), rx_ch);
 }
+#endif
 
+#if 0
 static void *def_tavil_mbhc_cal(void)
 {
 	void *tavil_wcd_cal;
@@ -4307,6 +4311,8 @@ static int msm_wcn_hw_params(struct snd_pcm_substream *substream,
 err:
 	return ret;
 }
+
+#endif
 
 static int msm_get_port_id(int be_id)
 {
@@ -4974,6 +4980,7 @@ static struct snd_soc_ops msm_mi2s_be_ops = {
 	.startup = msm_mi2s_snd_startup,
 	.shutdown = msm_mi2s_snd_shutdown,
 };
+#if 0
 
 static struct snd_soc_ops msm_be_ops = {
 	.hw_params = msm_snd_hw_params,
@@ -4987,6 +4994,7 @@ static struct snd_soc_ops msm_wcn_ops = {
 	.hw_params = msm_wcn_hw_params,
 };
 
+#endif
 
 /* Digital audio interface glue - connects codec <---> CPU */
 static struct snd_soc_dai_link msm_common_dai_links[] = {
@@ -5911,6 +5919,7 @@ static struct snd_soc_dai_link msm_common_be_dai_links[] = {
 };
 
 static struct snd_soc_dai_link msm_tavil_be_dai_links[] = {
+#if 0
 	{
 		.name = LPASS_BE_SLIMBUS_0_RX,
 		.stream_name = "Slimbus Playback",
@@ -6096,9 +6105,11 @@ static struct snd_soc_dai_link msm_tavil_be_dai_links[] = {
 		.dpcm_capture = 1,
 		.ignore_pmdown_time = 1,
 	},
+#endif
 };
 
 static struct snd_soc_dai_link msm_wcn_be_dai_links[] = {
+#if 0
 	{
 		.name = LPASS_BE_SLIMBUS_7_RX,
 		.stream_name = "Slimbus7 Playback",
@@ -6148,6 +6159,7 @@ static struct snd_soc_dai_link msm_wcn_be_dai_links[] = {
 		.ops = &msm_wcn_ops,
 		.ignore_suspend = 1,
 	},
+#endif
 };
 
 static struct snd_soc_dai_link ext_disp_be_dai_link[] = {};
@@ -6446,7 +6458,7 @@ static struct snd_soc_dai_link msm_tavil_snd_card_dai_links[
 			 ARRAY_SIZE(ext_disp_be_dai_link) +
 			 ARRAY_SIZE(msm_mi2s_be_dai_links) +
 			 ARRAY_SIZE(msm_auxpcm_be_dai_links)];
-
+#if 0
 static int msm_snd_card_tavil_late_probe(struct snd_soc_card *card)
 {
 	const char *be_dl_name = LPASS_BE_SLIMBUS_0_RX;
@@ -6482,6 +6494,7 @@ err_free_mbhc_cal:
 err:
 	return ret;
 }
+#endif
 
 #if IS_ENABLED(CONFIG_SND_SOC_CS35L36)
 static struct snd_soc_codec_conf spk_codec_right_ch_conf[] = {
@@ -6494,7 +6507,8 @@ static struct snd_soc_codec_conf spk_codec_right_ch_conf[] = {
 
 static struct snd_soc_card snd_soc_card_tavil_msm = {
 	.name		= "sdm845-tavil-snd-card",
-	.late_probe	= msm_snd_card_tavil_late_probe,
+// LPASS_BE_SLIMBUS_0_RX is disabled
+	//.late_probe	= msm_snd_card_tavil_late_probe,
 #if IS_ENABLED(CONFIG_SND_SOC_CS35L36)
 	.codec_conf		= spk_codec_right_ch_conf,
 	.num_configs	= ARRAY_SIZE(spk_codec_right_ch_conf),
